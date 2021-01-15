@@ -17,7 +17,7 @@ jobs:
         id: cache-choco
         uses: actions/cache@v1
         with:
-          path: ${{ CHOCO_CACHE }}
+          path: ${{ env.CHOCO_CACHE }}
           key: ${{ runner.os }}-Choco_${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_LIGHT_VERSION }}
 
       - name: Install OpenSSL (full)
