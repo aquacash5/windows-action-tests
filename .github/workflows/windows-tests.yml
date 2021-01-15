@@ -9,7 +9,7 @@ jobs:
       CHOCO_CACHE: ${{ github.workspace }}\.cache\
       OPENSSL_VERSION: 1.1.1.900
       OPENSSL_LIGHT_VERSION: 1_1_1i
-      OPENSSL_LIGHT_DIR: ${{ github.workspace }}\.cache\openssl-light-dl\
+      OPENSSL_LIGHT_DIR: ${{ github.workspace }}\.openssl-light-dl\
     steps:
       - name: Output
         run: Get-ChildItem $([System.IO.Path]::GetDirectoryName($(Get-Command openssl | Select-Object -ExpandProperty Source)))
@@ -19,11 +19,18 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.CHOCO_CACHE }}
-          key: ${{ runner.os }}-Choco_${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_LIGHT_VERSION }}
+          key: ${{ runner.os }}-Choco_${{ env.OPENSSL_VERSION }}
 
       - name: Install OpenSSL (full)
         run: choco install openssl --version ${{ env.OPENSSL_VERSION }} -c ${{ env.CHOCO_CACHE }} --no-progress
       
+      - name: Cache chocolatey
+        id: cache-choco
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.OPENSSL_LIGHT_DIR }}
+          key: ${{ runner.os }}-OpenSSL_${{ env.OPENSSL_LIGHT_VERSION }}
+
       - name: Download OpenSSL Light (32bit)
         uses: suisei-cn/actions-download-file@v1
         id: openssl-light-msi
