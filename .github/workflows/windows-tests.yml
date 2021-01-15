@@ -24,14 +24,15 @@ jobs:
       - name: Install OpenSSL (full)
         run: choco install openssl --version ${{ env.OPENSSL_VERSION }} -c ${{ env.CHOCO_CACHE }} --no-progress
       
-      - name: Cache chocolatey
-        id: cache-choco
+      - name: Cache openssl
+        id: cache-openssl
         uses: actions/cache@v1
         with:
           path: ${{ env.OPENSSL_LIGHT_DIR }}
           key: ${{ runner.os }}-OpenSSL_${{ env.OPENSSL_LIGHT_VERSION }}
 
       - name: Download OpenSSL Light (32bit)
+        if: steps.cache-openssl.outputs.cache-hit != 'true'
         uses: suisei-cn/actions-download-file@v1
         id: openssl-light-msi
         with:
