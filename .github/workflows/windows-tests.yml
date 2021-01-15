@@ -9,7 +9,7 @@ jobs:
       CHOCO_CACHE: ${{ github.workspace }}\.cache\
       OPENSSL_VERSION: 1.1.1.900
       OPENSSL_LIGHT_VERSION: 1_1_1i
-      OPENSSL_LIGHT_DIR: ${{ env.CHOCO_CACHE }}\openssl-light-dl\
+      OPENSSL_LIGHT_DIR: ${{ github.workspace }}\.cache\openssl-light-dl\
     steps:
       - name: Output
         run: Get-ChildItem $([System.IO.Path]::GetDirectoryName($(Get-Command openssl | Select-Object -ExpandProperty Source)))
