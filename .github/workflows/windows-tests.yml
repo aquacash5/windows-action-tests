@@ -8,3 +8,9 @@ jobs:
     steps:
       - name: Find existing openssl.light
         run: Write-Output $(Get-Command openssl | Select-Object -ExpandProperty Definition)
+      
+      - name: Install OpenSSL (full)
+        run: choco install openssl
+      
+      - name: New OpenSSL
+        run: Write-Output $(Get-Command openssl | Select-Object -ExpandProperty Definition)
