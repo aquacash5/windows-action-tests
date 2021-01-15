@@ -8,26 +8,21 @@ jobs:
     env:
       CHOCO_CACHE: ${{ github.workspace }}\.cache\
       OPENSSL_VERSION: 1.1.1.900
-      OPENSSL_LIGHT_VERSION: 1.1.1.20181020
     steps:
       - name: Find existing openssl.light
-        run: Write-Output  "::set-output name=openssl32::$(Get-Command openssl | Select-Object -ExpandProperty Definition)"
-      
+        id: find-openssl
+        run: Write-Output  "::set-output name=openssllight::$(Get-Command openssl | Select-Object -ExpandProperty Definition)"
+
+      - name: Output
+        run: |
+          Get-ChildItem $([System.IO.Path]::GetDirectoryName($(Get-Command openssl | Select-Object -ExpandProperty Source)))
+
       - name: Cache chocolatey
         id: cache-choco
         uses: actions/cache@v1
         with:
           path: ${{ env.CHOCO_CACHE }}
-          key: ${{ runner.os }}-Choco_${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_LIGHT_VERSION }}
+          key: ${{ runner.os }}-Choco_${{ env.OPENSSL_VERSION }}
 
       - name: Install OpenSSL (full)
         run: choco install openssl --version ${{ env.OPENSSL_VERSION }} -c ${{ env.CHOCO_CACHE }} --no-progress
-      
-      - name: Install OpenSSL (32 Bit)
-        run: choco install openssl.light --version ${{ env.OPENSSL_LIGHT_VERSION }} --forcex86 --param "/InstallDir:${{ github.workspace }}\.openssl\" -c ${{ env.CHOCO_CACHE }} --no-progress
-      
-      - name: Output
-        run: |
-          dir ${{ github.workspace }}\.openssl\
-          Write-Output "--------------------------------------------"
-          dir ${{ github.workspace }}\.openssl\bin\
