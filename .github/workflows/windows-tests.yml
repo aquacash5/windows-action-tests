@@ -5,12 +5,29 @@ on: push
 jobs:
   runner-test:
     runs-on: windows-2019
+    env:
+      CHOCO_CACHE: ${{ github.workspace }}\.cache\
+      OPENSSL_VERSION: 1.1.1.900
+      OPENSSL_LIGHT_VERSION: 1.1.1.20181020
     steps:
       - name: Find existing openssl.light
-        run: Write-Output $(Get-Command openssl | Select-Object -ExpandProperty Definition)
+        run: Write-Output  "::set-output name=openssl32::$(Get-Command openssl | Select-Object -ExpandProperty Definition)"
       
+      - name: Cache chocolatey
+        id: cache-choco
+        uses: actions/cache@v1
+        with:
+          path: ${{ CHOCO_CACHE }}
+          key: ${{ runner.os }}-Choco_${{ env.OPENSSL_VERSION }}-${{ env.OPENSSL_LIGHT_VERSION }}
+
       - name: Install OpenSSL (full)
-        run: choco install openssl
+        run: choco install openssl --version ${{ env.OPENSSL_VERSION }} -c ${{ env.CHOCO_CACHE }} -r
       
-      - name: New OpenSSL
-        run: Write-Output $(Get-Command openssl | Select-Object -ExpandProperty Definition)
+      - name: Install OpenSSL (32 Bit)
+        run: choco install openssl.light --version ${{ env.OPENSSL_LIGHT_VERSION }} --forcex86 --param "${{ github.workspace }}\.openssl\" -c ${{ env.CHOCO_CACHE }} -r
+      
+      - name: Output
+        run: |
+          dir ${{ github.workspace }}\.openssl\
+          Write-Output "--------------------------------------------"
+          dir ${{ github.workspace }}\.openssl\bin\
