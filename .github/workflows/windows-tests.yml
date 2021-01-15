@@ -8,7 +8,8 @@ jobs:
     env:
       CHOCO_CACHE: ${{ github.workspace }}\.cache\
       OPENSSL_VERSION: 1.1.1.900
-      OPENSSL_LIGHT_VERSION: 1.1.1.20181020
+      OPENSSL_LIGHT_VERSION: 1_1_1i
+      OPENSSL_LIGHT_DIR: ${{ env.CHOCO_CACHE }}\openssl-light-dl\
     steps:
       - name: Output
         run: Get-ChildItem $([System.IO.Path]::GetDirectoryName($(Get-Command openssl | Select-Object -ExpandProperty Source)))
@@ -23,11 +24,15 @@ jobs:
       - name: Install OpenSSL (full)
         run: choco install openssl --version ${{ env.OPENSSL_VERSION }} -c ${{ env.CHOCO_CACHE }} --no-progress
       
-      - name: Install OpenSSL (full)
-        run: choco uninstall openssl.light
+      - name: Download OpenSSL Light (32bit)
+        uses: suisei-cn/actions-download-file@v1
+        id: openssl-light-msi
+        with:
+          url: "https://slproweb.com/download/Win32OpenSSL_Light-${{ env.OPENSSL_LIGHT_VERSION }}.msi"
+          target: ${{ env.OPENSSL_LIGHT_DIR }}
 
-      - name: Install OpenSSL (32 Bit)
-        run: choco install openssl.light --version ${{ env.OPENSSL_LIGHT_VERSION }} --forcex86 --param "/InstallDir:${{ github.workspace }}\.openssl\" -c ${{ env.CHOCO_CACHE }} --no-progress
+      - name: Setup OpenSSL Light (32bit)
+        run: msiexec /a ${{ env.OPENSSL_LIGHT_DIR }}${{ steps.openssl-light-msi.outputs.filename }} TARGETDIR=${{ github.workspace }}\ext\openssl\
 
       - name: Output
-        run: Get-ChildItem ${{ github.workspace }}\.openssl\bin\
+        run: Get-ChildItem -Recurse ${{ github.workspace }}\ext\
