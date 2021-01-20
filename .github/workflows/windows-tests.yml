@@ -5,10 +5,11 @@ on: push
 jobs:
   runner-test:
     runs-on: ubuntu-18.04
+    env:
+      GIT_COMMIT: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v2
       - name: Zip README.md
-        shell: sh
         run: ./zip.sh
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
