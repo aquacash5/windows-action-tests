@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Zip README.md
-        run: zip readme.zip ./*
+        run: zip readme.zip *
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
