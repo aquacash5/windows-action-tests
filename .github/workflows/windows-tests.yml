@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Zip README.md
-        run: zip readme.zip *
+        run: ./zip.sh
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
