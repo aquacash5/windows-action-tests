@@ -6,6 +6,7 @@ jobs:
   runner-test:
     runs-on: ubuntu-18.04
     steps:
+      - uses: actions/checkout@v2
       - name: Zip README.md
         run: zip readme.zip *
       - name: Upload Artifact
