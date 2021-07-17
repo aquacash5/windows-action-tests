@@ -10,4 +10,4 @@ jobs:
       BETA_RELEASE: ${{ github.event.release.prerelease }}
     steps:
       - uses: actions/checkout@v2
-        run: echo $BETA_RELEASE
+      - run: echo $BETA_RELEASE
