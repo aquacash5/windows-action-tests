@@ -1,38 +1,13 @@
 name: Windows
 
-on: push
+release:
+  types: [published]
 
 jobs:
   runner-test:
     runs-on: ubuntu-18.04
     env:
-      GIT_COMMIT: ${{ github.sha }}
+      BETA_RELEASE: ${{ github.event.release.prerelease }}
     steps:
       - uses: actions/checkout@v2
-      - name: Zip README.md
-        run: ./zip.sh
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: readme
-          path: readme.zip
-          retention-days: 1
-    # runs-on: windows-2019
-    # env:
-    #   CHOCO_CACHE: ${{ github.workspace }}\.cache\
-    #   OPENSSL_VERSION: 1.1.1.900
-    #   OPENSSL_LIGHT_VERSION: 1_1_1i
-    #   OPENSSL_LIGHT_DIR: ${{ github.workspace }}\.openssl-light-dl\
-    # steps:
-    #   - name: Cache chocolatey
-    #     id: cache-choco
-    #     uses: actions/cache@v1
-    #     with:
-    #       path: ${{ env.CHOCO_CACHE }}
-    #       key: ${{ runner.os }}-Choco_${{ env.OPENSSL_VERSION }}
-
-    #   - name: Install OpenSSL (full)
-    #     run: choco install openssl --version ${{ env.OPENSSL_VERSION }} -c ${{ env.CHOCO_CACHE }} --no-progress
-
-    #   - name: Output
-    #     run: Get-ChildItem -Recurse $([System.IO.Path]::GetDirectoryName($(Get-Command openssl | Select-Object -ExpandProperty Source)))
+        run: echo $BETA_RELEASE
